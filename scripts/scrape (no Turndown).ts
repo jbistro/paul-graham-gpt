@@ -3,12 +3,8 @@ import axios from "axios";
 import * as cheerio from "cheerio";
 import fs from "fs";
 import { encode } from "gpt-3-encoder";
-import { NodeHtmlMarkdown } from 'node-html-markdown';
 
-const CHUNK_SIZE = 250;
-
-// create an instance of NodeHtmlMarkdown
-const nhm = new NodeHtmlMarkdown();
+const CHUNK_SIZE = 200;
 
 const getMetaData = async (url: string) => {
   const html = await axios.get(url);
@@ -26,11 +22,9 @@ const getWebsite = async (url: string) => {
   const html = await axios.get(url);
   const $ = cheerio.load(html.data);
 
-  // find the div with data-elementor-type="wp-page" attribute and convert its HTML to markdown
-  const htmlContent = $('div[data-elementor-type="wp-page"]').html() || '';
-  const markdownContent = nhm.translate(htmlContent);
+  const content = $('body').text();
 
-  let cleanedText = markdownContent.replace(/\s+/g, " ");
+  let cleanedText = content.replace(/\s+/g, " ");
   cleanedText = cleanedText.replace(/\.([a-zA-Z])/g, ". $1");
 
   const trimmedContent = cleanedText.trim();

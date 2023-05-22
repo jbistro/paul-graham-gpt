@@ -19,14 +19,14 @@ export const OpenAIStream = async (prompt: string, apiKey: string) => {
       messages: [
         {
           role: "system",
-          content: "You are a helpful assistant that accurately answers queries using Paul Graham's essays. Use the text provided to form your answer, but avoid copying word-for-word from the essays. Try to use your own words when possible. Keep your answer under 5 sentences. Be accurate, helpful, concise, and clear."
+          content: "You are a helpful and humorous techincal support representative for The Boring Lab that helps customers find answers to general and technical queries and even questions about how to code. Your responses should be clear and concice but conversational.  You should only provide answers with data that comes from the data you have.  Do not make anything and andnever promote a competitors product."
         },
         {
           role: "user",
           content: prompt
         }
       ],
-      max_tokens: 150,
+      max_tokens: 300,
       temperature: 0.0,
       stream: true
     })

@@ -2,16 +2,15 @@
 create extension vector;
 
 -- RUN 2nd
-create table pg (
-  id bigserial primary key,
-  essay_title text,
-  essay_url text,
-  essay_date text,
-  essay_thanks text,
-  content text,
-  content_length bigint,
-  content_tokens bigint,
-  embedding vector (1536)
+CREATE TABLE IF NOT EXISTS website_data (
+    id bigserial primary key,
+    url TEXT,
+    title TEXT,
+    description TEXT,
+    chunk TEXT NOT NULL,
+    chunk_length bigint,
+    chunk_tokens bigint,
+    embedding vector (1536)
 );
 
 -- RUN 3rd after running the scripts
@@ -22,13 +21,12 @@ create or replace function pg_search (
 )
 returns table (
   id bigint,
-  essay_title text,
-  essay_url text,
-  essay_date text,
-  essay_thanks text,
-  content text,
-  content_length bigint,
-  content_tokens bigint,
+  title text,
+  url text,
+  description text,
+  chunk text,
+  chunk_length bigint,
+  chunk_tokens bigint,
   similarity float
 )
 language plpgsql
@@ -36,23 +34,24 @@ as $$
 begin
   return query
   select
-    pg.id,
-    pg.essay_title,
-    pg.essay_url,
-    pg.essay_date,
-    pg.essay_thanks,
-    pg.content,
-    pg.content_length,
-    pg.content_tokens,
-    1 - (pg.embedding <=> query_embedding) as similarity
-  from pg
-  where 1 - (pg.embedding <=> query_embedding) > similarity_threshold
-  order by pg.embedding <=> query_embedding
+    wd.id,
+    wd.title,
+    wd.url,
+    wd.description,
+    wd.chunk,
+    wd.chunk_length,
+    wd.chunk_tokens,
+    1 - (wd.embedding <=> query_embedding) as similarity
+  from website_data wd
+  where 1 - (wd.embedding <=> query_embedding) > similarity_threshold
+  order by wd.embedding <=> query_embedding
   limit match_count;
 end;
 $$;
 
+
 -- RUN 4th
-create index on pg 
+create index on website_data 
 using ivfflat (embedding vector_cosine_ops)
 with (lists = 100);
+

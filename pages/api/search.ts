@@ -36,13 +36,14 @@ const handler = async (req: Request): Promise<Response> => {
     });
 
     if (error) {
-      console.error(error);
+      console.error("Database error:", error);
       return new Response("Error", { status: 500 });
     }
+    console.log("Data from database:", chunks);
 
     return new Response(JSON.stringify(chunks), { status: 200 });
   } catch (error) {
-    console.error(error);
+    console.error("Server error:", error);
     return new Response("Error", { status: 500 });
   }
 };

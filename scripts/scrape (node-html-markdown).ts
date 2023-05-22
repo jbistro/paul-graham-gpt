@@ -5,7 +5,7 @@ import fs from "fs";
 import { encode } from "gpt-3-encoder";
 import { NodeHtmlMarkdown } from 'node-html-markdown';
 
-const CHUNK_SIZE = 250;
+const CHUNK_SIZE = 200;
 
 // create an instance of NodeHtmlMarkdown
 const nhm = new NodeHtmlMarkdown();

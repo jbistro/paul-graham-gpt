@@ -50,10 +50,9 @@ export default function Home() {
     }
 
     const results: PGChunk[] = await searchResponse.json();
-    const uniqueResults = getUniqueChunks(results); // Filter the unique chunks
 
-    setChunks(uniqueResults); // Update this line
-   
+    setChunks(results);
+
     setLoading(false);
 
     inputRef.current?.focus();
@@ -91,17 +90,15 @@ export default function Home() {
     }
 
     const results: PGChunk[] = await searchResponse.json();
-    const uniqueResults = getUniqueChunks(results); // Filter the unique chunks
 
-    setChunks(uniqueResults);
+    setChunks(results);
 
     const prompt = endent`
-    Use the passages to answer the users question.  If the question is complicated or related to code you should summarize the question you are answering and provide a step by step discussion on how you are arriving to the answer. Be conversational and humorous in your tone but only only generate your answers from the passages.  If you do not know the answer just say you do not know.: "${query}"  
+    Use the following passages to provide an answer to the query: "${query}"
 
     ${results?.map((d: any) => d.content).join("\n\n")}
     `;
-    
-    
+
     const answerResponse = await fetch("/api/answer", {
       method: "POST",
       headers: {
@@ -199,17 +196,6 @@ export default function Home() {
     inputRef.current?.focus();
   }, []);
 
-function getUniqueChunks(chunks: PGChunk[]): PGChunk[] {
-  const uniqueUrlChunks: {[key: string]: PGChunk} = {};
-  chunks.forEach(chunk => {
-    if(!uniqueUrlChunks[chunk.url]) {
-      uniqueUrlChunks[chunk.url] = chunk;
-    }
-  });
-  return Object.values(uniqueUrlChunks);
-}
-
-  
   return (
     <>
       <Head>
@@ -349,7 +335,7 @@ function getUniqueChunks(chunks: PGChunk[]): PGChunk[] {
                   </>
                 )}
 
-                <div className="font-bold text-2xl mt-6">Resources</div>
+                <div className="font-bold text-2xl mt-6">Passages</div>
                 <div className="animate-pulse mt-2">
                   <div className="h-4 bg-gray-300 rounded"></div>
                   <div className="h-4 bg-gray-300 rounded mt-2"></div>
@@ -364,7 +350,7 @@ function getUniqueChunks(chunks: PGChunk[]): PGChunk[] {
                 <Answer text={answer} />
 
                 <div className="mt-6 mb-16">
-                  <div className="font-bold text-2xl">Resources</div>
+                  <div className="font-bold text-2xl">Passages</div>
 
                   {chunks.map((chunk, index) => (
                     <div key={index}>

@@ -6,37 +6,36 @@ import { Configuration, OpenAIApi } from "openai";
 
 loadEnvConfig("");
 
-const generateEmbeddings = async (essays: PGEssay[]) => {
+const generateEmbeddings = async (websites: PGEssay[]) => {
   const configuration = new Configuration({ apiKey: process.env.OPENAI_API_KEY });
   const openai = new OpenAIApi(configuration);
 
   const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
 
-  for (let i = 0; i < essays.length; i++) {
-    const section = essays[i];
+  for (let i = 0; i < websites.length; i++) {
+    const website = websites[i];
 
-    for (let j = 0; j < section.chunks.length; j++) {
-      const chunk = section.chunks[j];
+    for (let j = 0; j < website.chunks.length; j++) {
+      const chunk = website.chunks[j];
 
-      const { essay_title, essay_url, essay_date, essay_thanks, content, content_length, content_tokens } = chunk;
+      const { title, url, description, length, tokens } = chunk;
 
       const embeddingResponse = await openai.createEmbedding({
         model: "text-embedding-ada-002",
-        input: content
+        input: chunk.content
       });
 
       const [{ embedding }] = embeddingResponse.data.data;
 
       const { data, error } = await supabase
-        .from("pg")
+        .from("website_data")
         .insert({
-          essay_title,
-          essay_url,
-          essay_date,
-          essay_thanks,
-          content,
-          content_length,
-          content_tokens,
+          title,
+          url,
+          description,
+          chunk: chunk.content,
+          chunk_length: length,
+          chunk_tokens: tokens,
           embedding
         })
         .select("*");
@@ -53,7 +52,7 @@ const generateEmbeddings = async (essays: PGEssay[]) => {
 };
 
 (async () => {
-  const book: PGJSON = JSON.parse(fs.readFileSync("scripts/pg.json", "utf8"));
+  const json: PGJSON = JSON.parse(fs.readFileSync("scripts/pg.json", "utf8"));
 
-  await generateEmbeddings(book.essays);
+  await generateEmbeddings(json.websites);
 })();

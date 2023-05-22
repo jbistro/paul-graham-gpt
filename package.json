@@ -1,5 +1,5 @@
 {
-  "name": "paul-graham-gpt",
+  "name": "Boring-gpt",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -20,14 +20,18 @@
     "eslint": "8.34.0",
     "eslint-config-next": "13.1.6",
     "eventsource-parser": "^0.1.0",
+    "langchain": "^0.0.78",
     "next": "13.1.6",
+    "node-html-markdown": "^1.3.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "turndown": "^7.1.2",
     "typescript": "4.9.5"
   },
   "devDependencies": {
     "@next/env": "^13.2.3",
     "@supabase/supabase-js": "^2.8.0",
+    "@types/turndown": "^5.0.1",
     "autoprefixer": "^10.4.13",
     "axios": "^1.3.4",
     "cheerio": "^1.0.0-rc.12",
