@@ -11,6 +11,8 @@
 # next.js
 /.next/
 /out/
+pages/api/search(hybrid).ts
+pages/index (copy).tsx
 
 # production
 /build
